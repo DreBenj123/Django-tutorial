@@ -14,12 +14,13 @@ class Collection(models.Model):
 
 class Product(models.Model):
     title = models.CharField(max_length=255)
+    slug = models.SlugField()
     description = models.TextField()
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=6, decimal_places=2)
     # 9999.99
     inventory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
-    collection = models.ForeignKey(Collection, default=models.PROTECT
+    collection = models.ForeignKey(Collection, on_delete=models.PROTECT
 
                                    )
     promotions = models.ManyToManyField(Promotion)
@@ -31,18 +32,24 @@ class Customer(models.Model):
     MEMBERSHIP_GOLD = "G"
 
     MEMBERSHIP_CHOICES = [
-        ("B", "Bronze")
-        ("S", "Silver")
-        ("G", "Gold")
+        ("B", "Bronze"),
+        ("S", "Silver"),
+        ("G", "Gold"),
     ]
 
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
-    phone = models.CharField(255)
+    phone = models.CharField(max_length=255)
     birthdate = models.DateField(null=True)
     membership = models.CharField(
         max_length=1, choices=MEMBERSHIP_CHOICES, default="B")
+
+    class Meta:
+        db_table = 'store_customers'
+        indexes = [
+            models.Index(fields=["last_name", "first_name"])
+        ]
 
 
 class Order(models.Model):
@@ -51,9 +58,9 @@ class Order(models.Model):
     PAYMENT_STATUS_FAILED = "F"
 
     PAYMENT_STATUS = [
-        ("P", "Pending")
-        ("C", "Complete")
-        ("F", "Failed")
+        ("P", "Pending"),
+        ("C", "Complete"),
+        ("F", "Failed"),
     ]
 
     placed_at = models.DateField(auto_now_add=True)
@@ -74,6 +81,7 @@ class address(models.Model):
     city = models.CharField(max_length=255)
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE)
+    zip = models.TextField(default=False)
 
 
 class Cart(models.Model):
