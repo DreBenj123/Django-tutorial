@@ -37,7 +37,7 @@ class Customer(models.Model):
         ("G", "Gold"),
     ]
 
-    given_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=255)
@@ -75,7 +75,6 @@ class address(models.Model):
     city = models.CharField(max_length=255)
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE)
-    zip = models.TextField(default=False)
 
 
 class Cart(models.Model):
